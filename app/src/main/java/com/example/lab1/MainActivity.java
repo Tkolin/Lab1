@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,30 +21,45 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout board;
     private ArrayList<Button> squares = new ArrayList<>();
 
+    private  boolean startGame = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        RadioButton oBtn = findViewById(R.id.CrestBTN);
+        RadioButton xBtn = findViewById(R.id.KrugBTN);
 
         View.OnClickListener listener = (view) -> {
             Button btn = (Button) view;
             // Если текст на кнопке не пустой, то выходим из события
             if (!btn.getText().toString().equals("")) return;
 
+            if(!startGame) {
+                startGame = true;
+                if (oBtn.isChecked())
+                    GameManager.isTurn = true;
+                else
+                    GameManager.isTurn = false;
+            }
             // Устанавливаем либо X, либо O в зависимости от хода
             if (GameManager.isTurn) {
                 btn.setText(GameManager.firstSymbol);
                 int[] comb = calcWinnPositions(GameManager.firstSymbol);
                 if (comb != null) {
+                    highlightWinningCombination(comb);
                     Toast.makeText(
                             getApplicationContext(),
                             "Победитель: " + GameManager.firstSymbol,
                             Toast.LENGTH_LONG).show();
+
                 }
             } else {
                 btn.setText(GameManager.secondSymbol);
                 int[] comb = calcWinnPositions(GameManager.secondSymbol);
                 if (comb != null) {
+                    highlightWinningCombination(comb);
                     Toast.makeText(
                             getApplicationContext(),
                             "Победитель: " + GameManager.secondSymbol,
@@ -52,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
             }
             // Меняем очередность хода: true -> false
             GameManager.isTurn = !GameManager.isTurn;
+            if(GameManager.isTurn)
+                xBtn.setActivated(true);
+            else
+                oBtn.setActivated(true);
         };
 
         board = findViewById(R.id.board);
@@ -75,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
                     square.setBackgroundTintList(
                             ContextCompat.getColorStateList(
                                     getApplicationContext(),
-                                    R.color.white));
+                                    R.color.grey));
+
+                    startGame = false;
                 }
             }
         });
@@ -97,6 +119,15 @@ public class MainActivity extends AppCompatActivity {
             squares.get(i).setOnClickListener(listener);
         }
     }
+    // Метод выделение победной комбинации зелёным
+    public void highlightWinningCombination(int[] winningCombination) {
+        for (int index : winningCombination) {
+            Button square = squares.get(index);
+            square.setBackgroundTintList(ContextCompat.getColorStateList(
+                    getApplicationContext(),
+                    R.color.greed));
+        }
+    }
 
     // Метод генерации строк для доски
     private LinearLayout generateRow(int squaresCount) {
@@ -115,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
             button.setBackgroundTintList(
                     ContextCompat.getColorStateList(
                             getApplicationContext(),
-                            R.color.white));
+                            R.color.grey));
             button.setWidth(convertToPixel(50));
             button.setHeight(convertToPixel(90));
             rowContainer.addView(button); // Добавляем кнопку в строку

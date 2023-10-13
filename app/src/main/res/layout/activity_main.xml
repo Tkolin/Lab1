@@ -30,6 +30,26 @@
             android:layout_height="wrap_content"
             android:text="Обновить"
             android:layout_marginTop="15dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Кто ходит первый?"/>
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <RadioButton
+                android:id="@+id/CrestBTN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Крестик" />
+            <RadioButton
+                android:id="@+id/KrugBTN"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Нолик"/>
+        </RadioGroup>
 
     </LinearLayout>
 
